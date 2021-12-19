@@ -14,6 +14,7 @@ set updatetime=50 " Default is 4000 ms
 set scrolloff=8
 set signcolumn=yes
 set colorcolumn=80
+set splitbelow
 
 set nobackup
 set noswapfile
@@ -45,6 +46,10 @@ nnoremap <Leader>nt :NERDTreeToggle<Enter> " Nerdtree Toggle
 nnoremap <Leader>nf :NERDTreeFind<CR> " Nerdtree Find
 nnoremap <C-n> :bnext<CR>
 nnoremap <C-p> :bprevious<CR>
+
+tnoremap kj <C-\><C-n>
+
+command Term :split term://zsh
 
 if has("autocmd")
     autocmd FileType html setlocal ts=2 sts=2 sw=2 expandtab
