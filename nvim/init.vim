@@ -36,15 +36,15 @@ set listchars=tab:❯\ ,eol:¬
 command! Config execute ":e $MYVIMRC"
 
 let mapleader = " "
+
 inoremap jk <Esc>
 inoremap uu <Esc>:update<cr>
-nnoremap <silent> <Leader>c :bp<BAR>bd#<CR>
 
+nnoremap <silent> <Leader>c :bp<BAR>bd#<CR>
 nnoremap <Leader>nt :NERDTreeToggle<Enter> " Nerdtree Toggle
 nnoremap <Leader>nf :NERDTreeFind<CR> " Nerdtree Find
-
-:nnoremap <C-n> :bnext<CR>
-:nnoremap <C-p> :bprevious<CR>
+nnoremap <C-n> :bnext<CR>
+nnoremap <C-p> :bprevious<CR>
 
 if has("autocmd")
     autocmd FileType html setlocal ts=2 sts=2 sw=2 expandtab
