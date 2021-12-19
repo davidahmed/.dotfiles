@@ -36,6 +36,7 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'tpope/vim-surround'
 
 Plug 'neovim/nvim-lspconfig'
+Plug 'hrsh7th/nvim-compe'
 
 call plug#end()
 
@@ -60,7 +61,7 @@ nnoremap <C-p> :bprevious<CR>
 
 tnoremap kj <C-\><C-n>
 
-command Term :split term://zsh
+" command Term :split term://zsh
 
 if has("autocmd")
     autocmd FileType html setlocal ts=2 sts=2 sw=2 expandtab
@@ -71,4 +72,10 @@ if has("autocmd")
     autocmd BufNewFile,BufRead *.rss setfiletype xml
 endif
 
+source ~/.config/nvim/plug-config/lsp-config.vim
+
+lua << EOF
+require('lsp.python-ls')
+require('plugins.compe-config')
+EOF
 
