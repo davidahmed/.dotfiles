@@ -28,9 +28,15 @@ Plug 'preservim/nerdtree'
 " For Git purposes
 Plug 'tpope/vim-fugitive'
 
+" Airline
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+
 call plug#end()
 
 colorscheme gruvbox
+let g:airline_theme='angr'
+
 highlight Normal guibg=none
 set listchars=tab:❯\ ,eol:¬
 
