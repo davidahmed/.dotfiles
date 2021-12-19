@@ -35,6 +35,8 @@ Plug 'vim-airline/vim-airline-themes'
 " surround.vim: Delete/change/add parentheses/quotes/XML-tags/much more with ease
 Plug 'tpope/vim-surround'
 
+Plug 'neovim/nvim-lspconfig'
+
 call plug#end()
 
 colorscheme gruvbox
