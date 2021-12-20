@@ -36,7 +36,12 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'tpope/vim-surround'
 
 Plug 'neovim/nvim-lspconfig'
+
+Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/nvim-cmp'
+
+" Snippets
+Plug 'L3MON4D3/LuaSnip'
 
 call plug#end()
 
