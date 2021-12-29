@@ -15,6 +15,18 @@ require('packer').startup(function()
 	use 'nvim-lualine/lualine.nvim'
 	use 'kyazdani42/nvim-web-devicons'
 
+	-- Autocompletion --
+	use 'hrsh7th/cmp-nvim-lsp'
+	use 'hrsh7th/cmp-buffer'
+	use 'hrsh7th/cmp-path'
+	use 'hrsh7th/cmp-cmdline'
+	use 'hrsh7th/nvim-cmp'
+
+	-- Snippets --
+	use 'saadparwaiz1/cmp_luasnip'
+	use 'L3MON4D3/LuaSnip'
+	use "rafamadriz/friendly-snippets"
+
 	if Packer_bootstrap then require('packer').sync() end
 end)
 
@@ -22,6 +34,10 @@ vim.wo.relativenumber = true
 vim.o.background = 'dark' -- or 'light' for light mode
 vim.cmd([[colorscheme gruvbox]])
 vim.o.termguicolors = true
+vim.o.hlsearch = false
+vim.o.hidden = true
+vim.o.incsearch = true
+vim.o.swapfile = false
 
 
 local function map(mode, lhs, rhs, opts)
@@ -44,4 +60,71 @@ local nvim_lsp = require('lspconfig')
 nvim_lsp.pyright.setup{}
 
 require'nvim-web-devicons'.setup {}
+
+--------- Visual Enhancements --------------------
 require('lualine').setup{}
+
+
+--------- Autocompletion -------------------------
+-- Setup nvim-cmp.
+local cmp = require'cmp'
+local luasnip = require'luasnip'
+
+local has_words_before = function()
+	local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+	return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+end
+
+luasnip.config.set_config {
+	history = true,
+	updateevents = "TextChanged,TextChangedI"
+}
+
+require("luasnip/loaders/from_vscode").lazy_load()
+
+cmp.setup {
+	snippet = {
+		expand = function(args)
+			luasnip.lsp_expand(args.body)
+		end,
+	},
+	mapping = {
+		['<C-d>'] = cmp.mapping.scroll_docs(-4),
+		['<C-f>'] = cmp.mapping.scroll_docs(4),
+		['<C-Space>'] = cmp.mapping.complete(),
+		['<C-e>'] = cmp.mapping.close(),
+		['<CR>'] = cmp.mapping.confirm({
+			select = true
+		}),
+		["<Tab>"] = cmp.mapping(function(fallback)
+			local luasnip = require 'luasnip'
+			if cmp.visible() then
+				cmp.select_next_item()
+			elseif luasnip.expand_or_jumpable() then
+				luasnip.expand_or_jump()
+			elseif has_words_before() then
+				cmp.complete()
+			else
+				fallback()
+			end
+		end, {"i", "s"}),
+
+		["<S-Tab>"] = cmp.mapping(function(fallback)
+			local luasnip = require 'luasnip'
+			if cmp.visible() then
+				cmp.select_prev_item()
+			elseif luasnip.jumpable(-1) then
+				luasnip.jump(-1)
+			else
+				fallback()
+			end
+		end, {"i", "s"})
+	},
+	documentation = {
+		border = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" },
+	},
+	sources = {
+		{ name = 'nvim_lsp' },
+		{ name = 'luasnip' },
+	},
+}
