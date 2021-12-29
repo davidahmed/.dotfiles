@@ -1,80 +1,47 @@
-local execute = vim.api.nvim_command
-local fn = vim.fn
-
-local install_path = fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
-
-if fn.empty(fn.glob(install_path)) > 0 then
-	Packer_bootstrap = fn.system({
-		'git', 'clone', 'https://github.com/wbthomason/packer.nvim',
-		install_path
-	})
-	execute 'packadd packer.nvim'
-end
-
-
 require('packer').startup(function()
 	use 'wbthomason/packer.nvim'
-	use 'neovim/nvim-lspconfig' -- Collection of configurations for built-in LSP client
-	use 'preservim/nerdtree' -- NerdTree
+	use 'preservim/nerdtree' 
 
+	use 'ellisonleao/gruvbox.nvim'
+	use 'rktjmp/lush.nvim'
 
-	-- Completion
-	use {
-		'hrsh7th/nvim-cmp',
-		event = "UIEnter",
-		opt = false,
-		requires = {
-			{
-				'hrsh7th/cmp-nvim-lsp',
-				module = "cmp_nvim_lsp",
-				opt = true
-			}, {
-				'hrsh7th/cmp-buffer',
-				opt = true
-			}, {
-				'hrsh7th/cmp-path',
-				opt = true
-			}, {
-				'hrsh7th/cmp-nvim-lua',
-				opt = true
-			}, {
-				'saadparwaiz1/cmp_luasnip',
-				opt = true
-			}
-		},
-		config = function() require'completion'.setup() end
-	}
-    use {
-        'L3MON4D3/LuaSnip',
-        after = "nvim-cmp",
-        requires = {{"rafamadriz/friendly-snippets"}},
-        config = function() require'completion'.luasnip() end
-    }
+	use 'tpope/vim-fugitive'
+	use 'tpope/vim-surround'
 
-    use {'tpope/vim-fugitive', opt = true, event = "UIEnter"}
+	use 'neovim/nvim-lspconfig'
+	use 'nvim-treesitter/nvim-treesitter'
+	use 'nvim-treesitter/playground'
+
+	use 'nvim-lualine/lualine.nvim'
+	use 'kyazdani42/nvim-web-devicons'
 
 	if Packer_bootstrap then require('packer').sync() end
 end)
 
--- Add additional capabilities supported by nvim-cmp
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
+vim.wo.relativenumber = true
+vim.o.background = 'dark' -- or 'light' for light mode
+vim.cmd([[colorscheme gruvbox]])
+vim.o.termguicolors = true
 
 
-local lspconfig = require('lspconfig')
+local function map(mode, lhs, rhs, opts)
+  local options = {noremap = true}
+  if opts then options = vim.tbl_extend('force', options, opts) end
 
--- Enable some language servers with the additional completion capabilities offered by nvim-cmp
-local servers = {   'pyright' }
--- local servers = { 'clangd', 'rust_analyzer', 'pyright', 'tsserver' }
-for _, lsp in ipairs(servers) do
-	lspconfig[lsp].setup {
-		-- on_attach = my_custom_on_attach,
-		capabilities = capabilities,
-	}
+  vim.api.nvim_set_keymap(mode, lhs, rhs, options)
 end
 
--- Set completeopt to have a better completion experience
-vim.o.completeopt = 'menuone,noselect'
+--------- KEY BINDINGS ---------------------------
+vim.g.mapleader = ','
+
+map('i', 'jk', '<Esc>')
+map('i', 'uu', '<cmd>update<CR><Esc>')
+map('n', '<leader>nt', '<cmd>NERDTreeToggle<CR>')
 
 
-require'lspconfig'.pyright.setup{}
+--------- LSP SETUP    ---------------------------
+local nvim_lsp = require('lspconfig')
+nvim_lsp.pyright.setup{}
+
+require'nvim-web-devicons'.setup {}
+require('lualine').setup{}
