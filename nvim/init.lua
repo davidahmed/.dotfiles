@@ -27,6 +27,27 @@ require('packer').startup(function()
 	use 'L3MON4D3/LuaSnip'
 	use "rafamadriz/friendly-snippets"
 
+	-- Telescope --
+	use {
+		'nvim-telescope/telescope.nvim',
+		requires = { {'nvim-lua/plenary.nvim'} }
+	}
+  use {
+    'nvim-telescope/telescope-media-files.nvim',
+    requires = { {'nvim-telescope/telescope.nvim'} },
+    config = function() 
+      require('telescope').load_extension('media_files')
+    end
+  }
+	-- Formatter --
+	use({
+		"jose-elias-alvarez/null-ls.nvim",
+		config = function()
+			require("null-ls").setup()
+		end,
+		requires = { "nvim-lua/plenary.nvim" },
+	})
+
 	if Packer_bootstrap then require('packer').sync() end
 end)
 
@@ -38,7 +59,10 @@ vim.o.hlsearch = false
 vim.o.hidden = true
 vim.o.incsearch = true
 vim.o.swapfile = false
-
+vim.opt.tabstop = 2
+vim.opt.shiftwidth = 2
+vim.opt.softtabstop = 2
+vim.opt.expandtab = true
 
 local function map(mode, lhs, rhs, opts)
   local options = {noremap = true}
@@ -51,19 +75,51 @@ end
 vim.g.mapleader = ','
 
 map('i', 'jk', '<Esc>')
+map('t', 'jk', '<C-\\><C-n>')
 map('i', 'uu', '<cmd>update<CR><Esc>')
+map('n', '<leader>f', '<cmd>lua vim.lsp.buf.formatting()<CR>')
 map('n', '<leader>nt', '<cmd>NERDTreeToggle<CR>')
 
 
 --------- LSP SETUP    ---------------------------
 local nvim_lsp = require('lspconfig')
 nvim_lsp.pyright.setup{}
-
+-- require'lspconfig'.vuels.setup{}
 require'nvim-web-devicons'.setup {}
+
+
+-------- Formatting ------------------------------
+require("null-ls").setup({
+    sources = {
+        require("null-ls").builtins.formatting.eslint_d,
+        require("null-ls").builtins.formatting.prettier.with({
+          filetypes = {"html", "json", "yaml", "markdown"},
+        }),
+        require("null-ls").builtins.formatting.taplo,
+        require("null-ls").builtins.diagnostics.eslint_d,
+        require("null-ls").builtins.completion.spell,
+    },
+    on_attach = function(client)
+        if client.resolved_capabilities.document_formatting then
+            vim.cmd([[
+            augroup LspFormatting
+                autocmd! * <buffer>
+                autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync()
+            augroup END
+            ]])
+        end
+    end,
+})
 
 --------- Visual Enhancements --------------------
 require('lualine').setup{}
 
+
+--------- Telescope  --------------------
+map('n', '<leader>ff', "<cmd>lua require('telescope.builtin').find_files()<cr>")
+map('n', '<leader>fg', "<cmd>lua require('telescope.builtin').live_grep()<cr>")
+map('n', '<leader>fb', "<cmd>lua require('telescope.builtin').buffers()<cr>")
+map('n', '<leader>fh', "<cmd>lua require('telescope.builtin').help_tags()<cr>")
 
 --------- Autocompletion -------------------------
 -- Setup nvim-cmp.
