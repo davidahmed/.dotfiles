@@ -79,11 +79,11 @@ map('t', 'jk', '<C-\\><C-n>')
 map('i', 'uu', '<cmd>update<CR><Esc>')
 map('n', '<leader>f', '<cmd>lua vim.lsp.buf.formatting()<CR>')
 map('n', '<leader>nt', '<cmd>NERDTreeToggle<CR>')
-
+map('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>')
 
 --------- LSP SETUP    ---------------------------
 local nvim_lsp = require('lspconfig')
-nvim_lsp.pyright.setup{}
+nvim_lsp.pyright.setup{on_attach=on_attach}
 -- require'lspconfig'.vuels.setup{}
 require'nvim-web-devicons'.setup {}
 
@@ -91,11 +91,19 @@ require'nvim-web-devicons'.setup {}
 -------- Formatting ------------------------------
 require("null-ls").setup({
     sources = {
-        require("null-ls").builtins.formatting.eslint_d,
+        require("null-ls").builtins.formatting.eslint_d.with({
+          filetypes = {"vue", "javascript"}
+        }),
         require("null-ls").builtins.formatting.prettier.with({
           filetypes = {"html", "json", "yaml", "markdown"},
         }),
         require("null-ls").builtins.formatting.taplo,
+        require("null-ls").builtins.formatting.black.with({
+          prefer_local = ".venv/bin",
+        }),
+        require("null-ls").builtins.diagnostics.flake8.with({
+          prefer_local = ".venv/bin",
+        }), 
         require("null-ls").builtins.diagnostics.eslint_d,
         require("null-ls").builtins.completion.spell,
     },
