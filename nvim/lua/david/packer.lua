@@ -2,8 +2,14 @@ require('packer').startup(function()
 	use 'wbthomason/packer.nvim'
 	use 'preservim/nerdtree' 
 
-	use 'ellisonleao/gruvbox.nvim'
-	use 'rktjmp/lush.nvim'
+  use({
+    'rose-pine/neovim',
+    as = 'rose-pine',
+    config = function()
+        require("rose-pine").setup()
+        vim.cmd('colorscheme rose-pine')
+    end
+})
 
 	use 'tpope/vim-fugitive'
 	use 'tpope/vim-surround'
