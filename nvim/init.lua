@@ -1,7 +1,7 @@
-require('david')
+require("david")
 
 vim.wo.relativenumber = true
-vim.o.background = 'dark' -- or 'light' for light mode
+vim.o.background = "dark" -- or 'light' for light mode
 vim.o.termguicolors = true
 vim.o.hlsearch = false
 vim.o.hidden = true
